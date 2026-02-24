@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - SG Móvil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-6">
+    <div class="max-w-md mx-auto bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+        <h2 class="text-2xl font-bold mb-6 text-blue-400 text-center">SG MÓVIL PANEL</h2>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">CÓDIGO DE CLIENTE</label>
+                <input type="text" id="admin-codigo" placeholder="Ej: SG-100" class="w-full p-2 rounded bg-gray-700 border border-gray-600 outline-none focus:border-blue-500 text-white">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">MODELO DEL EQUIPO</label>
+                <input type="text" id="admin-modelo" placeholder="Ej: iPhone 12" class="w-full p-2 rounded bg-gray-700 border border-gray-600 outline-none focus:border-blue-500 text-white">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">ESTADO ACTUAL</label>
+                <select id="admin-estado" class="w-full p-2 rounded bg-gray-700 border border-gray-600 outline-none focus:border-blue-500 text-white">
+                    <option>Recibido</option>
+                    <option>En espera de piezas</option>
+                    <option>En reparación</option>
+                    <option>¡Listo para entrega!</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">NOTAS PARA EL CLIENTE</label>
+                <textarea id="admin-detalles" placeholder="¿Qué le quieres decir al cliente?" class="w-full p-2 rounded bg-gray-700 border border-gray-600 h-24 outline-none focus:border-blue-500 text-white"></textarea>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">LINK DE LA FOTO</label>
+                <input type="text" id="admin-foto" placeholder="Pega el link de ImgBB aquí" class="w-full p-2 rounded bg-gray-700 border border-gray-600 outline-none focus:border-blue-500 text-white">
+            </div>
+            <button onclick="guardarCambios()" id="btn-guardar" class="w-full bg-blue-600 hover:bg-blue-500 p-3 rounded-lg font-bold transition-all shadow-lg mt-4">
+                🚀 GUARDAR EN BASE DE DATOS
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // CONFIGURACIÓN DE TU PROYECTO SG MOVIL
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBpc9mNkqjx0IvUaGHlhqQhGZdUoNE1Kw",
+            authDomain: "sg-movil-168dc.firebaseapp.com",
+            projectId: "sg-movil-168dc",
+            storageBucket: "sg-movil-168dc.firebasestorage.app",
+            messagingSenderId: "701917698215",
+            appId: "1:701917698215:web:f89880c11f91f6da38e382"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.guardarCambios = async () => {
+            const btn = document.getElementById('btn-guardar');
+            const cod = document.getElementById('admin-codigo').value;
+
+            if(!cod) { alert("¡Por favor ingresa un código!"); return; }
+
+            btn.innerText = "⏳ Guardando...";
+            btn.disabled = true;
+
+            try {
+                await setDoc(doc(db, "reparaciones", cod), {
+                    modelo: document.getElementById('admin-modelo').value,
+                    estado: document.getElementById('admin-estado').value,
+                    detalles: document.getElementById('admin-detalles').value,
+                    foto_url: document.getElementById('admin-foto').value
+                }, { merge: true });
+                
+                alert("✅ ¡Éxito! SG Móvil actualizado en la nube.");
+            } catch (error) {
+                console.error(error);
+                alert("❌ Error de conexión: " + error.message);
+            } finally {
+                btn.innerText = "🚀 GUARDAR EN BASE DE DATOS";
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
