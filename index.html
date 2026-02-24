@@ -3,76 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SG MÓVIL - Centro de Soporte Técnico</title>
+    <title>SG MÓVIL - Centro de Soporte</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            background: radial-gradient(circle at top, #1a202c 0%, #07090e 100%);
-            min-height: 100vh;
-        }
-        .tarjeta-cristal {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .borde-neon {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-        }
+        body { background: radial-gradient(circle at top, #1a202c 0%, #07090e 100%); min-height: 100vh; color: white; }
+        .tarjeta-cristal { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .paso-activo { color: #3b82f6; text-shadow: 0 0 10px rgba(59, 130, 246, 0.8); }
-        @keyframes escaneo {
-            0% { top: 0%; }
-            100% { top: 100%; }
-        }
-        .escaner::after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            background: #3b82f6;
-            top: 0;
-            left: 0;
-            box-shadow: 0 0 15px #3b82f6;
-            animation: escaneo 3s linear infinite;
-        }
     </style>
 </head>
-<body class="text-gray-100">
-
+<body>
     <div class="container mx-auto px-4 py-8 max-w-lg">
         <div class="text-center mb-10">
-            <h1 class="text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
-                SG MÓVIL
-            </h1>
-            <div class="h-1 w-24 bg-blue-500 mx-auto mt-2 rounded-full borde-neon"></div>
-            <p class="mt-4 text-gray-400 text-xs uppercase tracking-widest font-bold">Sistema de Seguimiento Técnico</p>
+            <h1 class="text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">SG MÓVIL</h1>
+            <p class="mt-4 text-gray-400 text-xs uppercase tracking-widest font-bold">Seguimiento Técnico Digital</p>
         </div>
 
-        <div class="tarjeta-cristal p-8 rounded-3xl mb-8 relative overflow-hidden">
-            <div class="relative z-10">
-                <label class="block text-blue-400 text-xs font-bold mb-2 uppercase ml-1">Código de Seguimiento</label>
-                <input type="text" id="orderCode" placeholder="EJ: SG-100" 
-                    class="w-full bg-black/40 p-4 rounded-xl border border-gray-700 text-white text-2xl font-mono text-center mb-4 focus:border-blue-500 outline-none transition-all uppercase shadow-inner">
-                <button onclick="buscarReparacion()" id="btn-buscar" 
-                    class="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-xl font-black text-sm tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
-                    <i class="fas fa-microchip"></i> ESCANEAR ESTADO
-                </button>
-            </div>
+        <div class="tarjeta-cristal p-8 rounded-3xl mb-8">
+            <label class="block text-blue-400 text-xs font-bold mb-2 uppercase text-center">Código de Seguimiento</label>
+            <input type="text" id="orderCode" placeholder="EJ: SG-100" class="w-full bg-black/40 p-4 rounded-xl border border-gray-700 text-white text-2xl font-mono text-center mb-4 uppercase">
+            <button onclick="buscarReparacion()" id="btn-buscar" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-xl font-black text-sm tracking-widest transition-all flex items-center justify-center gap-3">
+                <i class="fas fa-microchip"></i> CONSULTAR ESTADO
+            </button>
         </div>
 
-        <div id="resultado" class="hidden animate-fade-in">
-            <div class="tarjeta-cristal rounded-3xl overflow-hidden relative">
-                <div class="p-6 border-b border-gray-800 flex justify-between items-end">
-                    <div>
-                        <h3 id="res-modelo" class="text-2xl font-bold text-white uppercase tracking-tight">---</h3>
-                        <p class="text-gray-500 text-xs mt-1 font-mono tracking-tighter" id="res-id">ORDEN: #---</p>
-                    </div>
-                    <div id="res-badge" class="bg-blue-900/40 text-blue-400 px-4 py-1 rounded-md border border-blue-500/30 text-[10px] font-bold uppercase tracking-widest">
-                        ESTADO
-                    </div>
+        <div id="resultado" class="hidden space-y-6">
+            <div class="tarjeta-cristal rounded-3xl overflow-hidden">
+                <div class="p-6 border-b border-gray-800 flex justify-between items-center">
+                    <h3 id="res-modelo" class="text-2xl font-bold uppercase tracking-tight">---</h3>
+                    <div id="res-badge" class="bg-blue-900/40 text-blue-400 px-3 py-1 rounded border border-blue-500/30 text-[10px] font-bold uppercase">ESTADO</div>
                 </div>
 
-                <div class="p-6 grid grid-cols-4 gap-2 text-center text-[8px] font-bold uppercase tracking-tighter border-b border-gray-800">
+                <div class="p-4 grid grid-cols-4 gap-2 text-center text-[8px] font-bold uppercase border-b border-gray-800">
                     <div id="paso1" class="text-gray-600"><i class="fas fa-inbox text-lg mb-1 block"></i>Recibido</div>
                     <div id="paso2" class="text-gray-600"><i class="fas fa-tools text-lg mb-1 block"></i>Diagnóstico</div>
                     <div id="paso3" class="text-gray-600"><i class="fas fa-atom text-lg mb-1 block"></i>En Proceso</div>
@@ -80,17 +42,20 @@
                 </div>
 
                 <div class="p-6">
-                    <div class="bg-blue-500/5 p-4 rounded-xl border border-blue-500/10 mb-6">
-                        <i class="fas fa-quote-left text-blue-500/20 text-2xl mb-2"></i>
-                        <p id="res-comentario" class="text-gray-300 italic text-sm leading-relaxed">---</p>
+                    <div class="p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl mb-4 text-center">
+                        <p class="text-[10px] text-blue-400 uppercase font-bold mb-1">Fecha de Entrega Estimada:</p>
+                        <p id="res-entrega" class="text-xl font-bold italic text-white">---</p>
                     </div>
 
-                    <div id="contenedor-foto" class="hidden relative group">
-                        <div class="escaner overflow-hidden rounded-xl border border-gray-700">
-                            <img id="res-foto" src="" class="w-full grayscale group-hover:grayscale-0 transition-all duration-500">
-                        </div>
-                        <p class="text-center text-[9px] text-gray-500 mt-2 uppercase tracking-widest"><i class="fas fa-camera mr-1"></i> Evidencia Técnica del Proceso</p>
+                    <p id="res-comentario" class="text-gray-400 italic text-sm text-center mb-6">---</p>
+
+                    <div id="contenedor-foto" class="hidden mb-6 rounded-xl overflow-hidden border border-gray-700">
+                        <img id="res-foto" src="" class="w-full">
                     </div>
+
+                    <button onclick="contactarWhatsApp()" class="w-full bg-green-600 hover:bg-green-500 text-white p-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all">
+                        <i class="fab fa-whatsapp text-xl"></i> HABLAR CON EL TÉCNICO
+                    </button>
                 </div>
             </div>
         </div>
@@ -115,40 +80,33 @@
         window.buscarReparacion = async () => {
             const codigo = document.getElementById('orderCode').value.trim().toUpperCase();
             if(!codigo) return;
-
             const btn = document.getElementById('btn-buscar');
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> PROCESANDO...';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> ESCANEANDO...';
             
-            const docRef = doc(db, "reparaciones", codigo);
-            const docSnap = await getDoc(docRef);
+            try {
+                const docSnap = await getDoc(doc(db, "reparaciones", codigo));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('res-modelo').innerText = data.modelo;
+                    document.getElementById('res-badge').innerText = data.estado;
+                    document.getElementById('res-entrega').innerText = data.entrega || "Por confirmar";
+                    document.getElementById('res-comentario').innerText = data.detalles || "Sin notas adicionales.";
+                    
+                    const estados = { "Recibido": 1, "En espera de piezas": 2, "En reparación": 3, "¡Listo para entrega!": 4 };
+                    const nivel = estados[data.estado] || 1;
+                    for(let i=1; i<=4; i++) { document.getElementById(`paso${i}`).className = i <= nivel ? 'paso-activo' : 'text-gray-600'; }
 
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                document.getElementById('res-modelo').innerText = data.modelo;
-                document.getElementById('res-id').innerText = `ORDEN: #${codigo}`;
-                document.getElementById('res-badge').innerText = data.estado;
-                document.getElementById('res-comentario').innerText = data.detalles || "Sin reporte técnico adicional.";
-                
-                // Lógica de progreso
-                const estados = { "Recibido": 1, "En espera de piezas": 2, "En reparación": 3, "¡Listo para entrega!": 4 };
-                const nivelActual = estados[data.estado] || 1;
-                for(let i=1; i<=4; i++) {
-                    const paso = document.getElementById(`paso${i}`);
-                    paso.className = i <= nivelActual ? 'paso-activo transition-all duration-1000' : 'text-gray-600';
-                }
+                    if(data.foto_url) { document.getElementById('res-foto').src = data.foto_url; document.getElementById('contenedor-foto').classList.remove('hidden'); }
+                    document.getElementById('resultado').classList.remove('hidden');
+                } else { alert("Código no encontrado."); }
+            } catch (e) { alert("Error de conexión."); }
+            btn.innerHTML = '<i class="fas fa-microchip"></i> CONSULTAR ESTADO';
+        };
 
-                if(data.foto_url) {
-                    document.getElementById('res-foto').src = data.foto_url;
-                    document.getElementById('contenedor-foto').classList.remove('hidden');
-                } else {
-                    document.getElementById('contenedor-foto').classList.add('hidden');
-                }
-
-                document.getElementById('resultado').classList.remove('hidden');
-            } else {
-                alert("SISTEMA: Código no registrado en la base de datos.");
-            }
-            btn.innerHTML = '<i class="fas fa-microchip"></i> ESCANEAR ESTADO';
+        window.contactarWhatsApp = () => {
+            const tel = "573024555358"; // <--- CAMBIA ESTO
+            const cod = document.getElementById('orderCode').value;
+            window.open(`https://wa.me/${tel}?text=Hola SG Móvil, mi código es ${cod}. Quisiera más información.`);
         };
     </script>
 </body>

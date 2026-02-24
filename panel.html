@@ -2,56 +2,49 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - SG Móvil</title>
+    <title>SG MÓVIL - Panel Administrativo</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white p-6">
-    <div class="max-w-md mx-auto bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
-        <h2 class="text-2xl font-bold mb-6 text-blue-400 text-center">SG MÓVIL PANEL</h2>
+<body class="bg-gray-900 text-white p-4">
+    <div class="max-w-md mx-auto bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700">
+        <h2 class="text-2xl font-bold mb-6 text-blue-400 text-center uppercase tracking-tighter text-blue-400">Panel de Control SG</h2>
+        
         <div class="space-y-4">
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">CÓDIGO DE CLIENTE</label>
-                <input type="text" id="admin-codigo" placeholder="Ej: SG-100" class="w-full p-2 rounded bg-gray-700 border border-gray-600 outline-none focus:border-blue-500 text-white">
-            </div>
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">MODELO DEL EQUIPO</label>
-                <input type="text" id="admin-modelo" placeholder="Ej: iPhone 12" class="w-full p-2 rounded bg-gray-700 border border-gray-600 outline-none focus:border-blue-500 text-white">
-            </div>
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">ESTADO ACTUAL</label>
-                <select id="admin-estado" class="w-full p-2 rounded bg-gray-700 border border-gray-600 outline-none focus:border-blue-500 text-white">
-                    <option>Recibido</option>
-                    <option>En espera de piezas</option>
-                    <option>En reparación</option>
-                    <option>¡Listo para entrega!</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">NOTAS PARA EL CLIENTE</label>
-                <textarea id="admin-detalles" placeholder="¿Qué le quieres decir al cliente?" class="w-full p-2 rounded bg-gray-700 border border-gray-600 h-24 outline-none focus:border-blue-500 text-white"></textarea>
-            </div>
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">LINK DE LA FOTO</label>
-                <input type="text" id="admin-foto" placeholder="Pega el link de ImgBB aquí" class="w-full p-2 rounded bg-gray-700 border border-gray-600 outline-none focus:border-blue-500 text-white">
-            </div>
-            <button onclick="guardarCambios()" id="btn-guardar" class="w-full bg-blue-600 hover:bg-blue-500 p-3 rounded-lg font-bold transition-all shadow-lg mt-4">
-                🚀 GUARDAR EN BASE DE DATOS
+            <input type="text" id="admin-codigo" placeholder="Código (Ej: SG-100)" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white uppercase">
+            <input type="text" id="admin-modelo" placeholder="Modelo del Equipo" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white">
+            
+            <select id="admin-estado" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white">
+                <option>Recibido</option>
+                <option>En espera de piezas</option>
+                <option>En reparación</option>
+                <option>¡Listo para entrega!</option>
+            </select>
+
+            <input type="text" id="admin-entrega" placeholder="Fecha prometida (Ej: Hoy 5 PM)" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white">
+            <textarea id="admin-detalles" placeholder="Comentarios para el cliente" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white h-24"></textarea>
+            <input type="text" id="admin-foto" placeholder="Link directo de foto (ImgBB)" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white">
+            
+            <button onclick="guardarCambios()" id="btn-guardar" class="w-full bg-blue-600 p-4 rounded-xl font-black hover:bg-blue-500 transition-all shadow-lg">
+                💾 GUARDAR CAMBIOS
+            </button>
+
+            <button onclick="imprimirTicket()" class="w-full bg-gray-700 p-4 rounded-xl font-bold border border-gray-600 hover:bg-gray-600 transition-all">
+                🖨️ IMPRIMIR COMPROBANTE
             </button>
         </div>
     </div>
 
     <script type="module">
+        // SEGURIDAD
+        const pass = prompt("Clave de acceso SG:");
+        if (pass !== "SG2024") { // <--- TU CLAVE
+            document.body.innerHTML = "PROHIBIDO";
+            window.location.href = "index.html";
+        }
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-// Pide contraseña apenas carga la página
-const pass = prompt("Acceso Restringido. Ingrese la clave de SG Móvil:");
 
-if (pass !== "Emily4898") {
-    alert("Acceso denegado.");
-    document.body.innerHTML = "<h1>No tienes permiso para estar aquí.</h1>";
-    window.location.href = "index.html"; // Lo manda a la página del cliente
-}
-        // CONFIGURACIÓN DE TU PROYECTO SG MOVIL
         const firebaseConfig = {
             apiKey: "AIzaSyBBpc9mNkqjx0IvUaGHlhqQhGZdUoNE1Kw",
             authDomain: "sg-movil-168dc.firebaseapp.com",
@@ -65,30 +58,43 @@ if (pass !== "Emily4898") {
         const db = getFirestore(app);
 
         window.guardarCambios = async () => {
+            const cod = document.getElementById('admin-codigo').value.toUpperCase();
+            if(!cod) return alert("Falta el código");
             const btn = document.getElementById('btn-guardar');
-            const cod = document.getElementById('admin-codigo').value;
-
-            if(!cod) { alert("¡Por favor ingresa un código!"); return; }
-
-            btn.innerText = "⏳ Guardando...";
-            btn.disabled = true;
+            btn.innerText = "PROCESANDO...";
 
             try {
                 await setDoc(doc(db, "reparaciones", cod), {
                     modelo: document.getElementById('admin-modelo').value,
                     estado: document.getElementById('admin-estado').value,
+                    entrega: document.getElementById('admin-entrega').value,
                     detalles: document.getElementById('admin-detalles').value,
                     foto_url: document.getElementById('admin-foto').value
                 }, { merge: true });
-                
-                alert("✅ ¡Éxito! SG Móvil actualizado en la nube.");
-            } catch (error) {
-                console.error(error);
-                alert("❌ Error de conexión: " + error.message);
-            } finally {
-                btn.innerText = "🚀 GUARDAR EN BASE DE DATOS";
-                btn.disabled = false;
-            }
+                alert("¡Base de datos actualizada!");
+            } catch (e) { alert("Error al guardar."); }
+            btn.innerText = "💾 GUARDAR CAMBIOS";
+        };
+
+        window.imprimirTicket = () => {
+            const cod = document.getElementById('admin-codigo').value;
+            const mod = document.getElementById('admin-modelo').value;
+            const ent = document.getElementById('admin-entrega').value;
+            const win = window.open('', '', 'width=300,height=400');
+            win.document.write(`
+                <div style="font-family:sans-serif; text-align:center; padding:10px; border:1px solid #000;">
+                    <h1 style="margin:0">SG MÓVIL</h1>
+                    <p>Comprobante de Ingreso</p>
+                    <hr>
+                    <p>CÓDIGO: <b style="font-size:20px">${cod.toUpperCase()}</b></p>
+                    <p>EQUIPO: ${mod}</p>
+                    <p>ENTREGA ESTIMADA: ${ent}</p>
+                    <hr>
+                    <p style="font-size:10px">Consulta tu estado en:<br><b>tu-link.github.io/SGMovil</b></p>
+                </div>
+            `);
+            win.print();
+            win.close();
         };
     </script>
 </body>
