@@ -2,75 +2,83 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>SG MÓVIL - Panel Administrativo</title>
+    <title>SG MÓVIL - Panel Administrativo Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray-900 text-white p-4">
-    <div class="max-w-md mx-auto bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700">
-        <h2 class="text-2xl font-bold mb-6 text-blue-400 text-center uppercase tracking-tighter">Panel de Control SG</h2>
+    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        <div class="space-y-4">
-            <div>
-                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Código de Orden</label>
-                <input type="text" id="admin-codigo" placeholder="Ej: SG-100" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white uppercase outline-none focus:border-blue-500">
-            </div>
-
-            <div>
-                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Modelo del Equipo</label>
-                <input type="text" id="admin-modelo" placeholder="Ej: Samsung A54" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white outline-none">
-            </div>
+        <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700">
+            <h2 class="text-xl font-bold mb-4 text-blue-400 uppercase tracking-tighter"><i class="fas fa-plus-circle mr-2"></i>Nueva Orden / Editar</h2>
             
-            <div>
-                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Estado Actual</label>
-                <select id="admin-estado" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white outline-none">
+            <div class="space-y-3">
+                <input type="text" id="admin-codigo" placeholder="Código (Ej: SG-100)" class="w-full p-2 rounded bg-gray-700 border border-gray-600 uppercase outline-none focus:border-blue-500">
+                <input type="text" id="admin-modelo" placeholder="Modelo del Equipo" class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+                
+                <select id="admin-estado" class="w-full p-2 rounded bg-gray-700 border border-gray-600">
                     <option>Recibido</option>
                     <option>En espera de piezas</option>
                     <option>En reparación</option>
                     <option>¡Listo para entrega!</option>
                 </select>
-            </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Fecha Prometida</label>
-                    <input type="text" id="admin-entrega" placeholder="Mañana 5 PM" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white text-xs outline-none">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="admin-entrega" placeholder="Fecha Entrega" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-xs">
+                    <input type="number" id="admin-precio" placeholder="Precio (Ej: 120000)" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-green-400 font-bold">
                 </div>
-                <div>
-                    <label class="text-[10px] text-green-400 uppercase font-bold ml-1">Precio $</label>
-                    <input type="text" id="admin-precio" placeholder="120.000" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-green-400 font-bold outline-none">
+
+                <textarea id="admin-detalles" placeholder="Notas técnicas..." class="w-full p-2 rounded bg-gray-700 border border-gray-600 h-16"></textarea>
+                <input type="text" id="admin-foto" placeholder="Link Foto ImgBB" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-xs">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="guardarCambios()" id="btn-guardar" class="bg-blue-600 py-3 rounded-xl font-black hover:bg-blue-500 transition-all">💾 GUARDAR</button>
+                    <button onclick="imprimirTicket()" class="bg-gray-700 py-3 rounded-xl font-bold border border-gray-600 hover:bg-gray-600 transition-all text-sm">🖨️ TICKET</button>
                 </div>
             </div>
+        </div>
 
-            <div>
-                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Notas para el cliente</label>
-                <textarea id="admin-detalles" placeholder="Cambio de pantalla original..." class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white h-20 outline-none"></textarea>
-            </div>
-
-            <div>
-                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Link de Foto (ImgBB)</label>
-                <input type="text" id="admin-foto" placeholder="https://i.ibb.co/..." class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white text-xs outline-none">
+        <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700 flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-green-400 uppercase tracking-tighter"><i class="fas fa-chart-line mr-2"></i>Caja y Historial</h2>
+                <button onclick="cerrarCaja()" class="bg-red-900/30 text-red-500 border border-red-500/50 px-3 py-1 rounded-lg text-[10px] font-bold hover:bg-red-600 hover:text-white transition-all">
+                    <i class="fas fa-lock mr-1"></i> CERRAR CAJA
+                </button>
             </div>
             
-            <button onclick="guardarCambios()" id="btn-guardar" class="w-full bg-blue-600 p-4 rounded-xl font-black hover:bg-blue-500 transition-all shadow-lg active:scale-95">
-                💾 GUARDAR CAMBIOS
-            </button>
+            <div class="bg-black/40 p-4 rounded-xl border border-green-500/20 mb-4 text-center">
+                <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Ganancia Real (Entregados)</p>
+                <p id="ganancia-total" class="text-4xl font-black text-green-400">COP $ 0</p>
+            </div>
 
-            <button onclick="imprimirTicket()" class="w-full bg-gray-700 p-4 rounded-xl font-bold border border-gray-600 hover:bg-gray-600 transition-all active:scale-95">
-                🖨️ IMPRIMIR COMPROBANTE
-            </button>
+            <div class="relative mb-4">
+                <input type="text" id="buscador" onkeyup="filtrarHistorial()" placeholder="Buscar equipo o código..." class="w-full p-2 pl-9 rounded bg-gray-900 border border-gray-700 text-sm outline-none focus:border-blue-500">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-500 text-xs"></i>
+            </div>
+
+            <div class="overflow-y-auto max-h-[300px] custom-scrollbar">
+                <table class="w-full text-[11px] text-left">
+                    <thead class="sticky top-0 bg-gray-800 text-gray-400 uppercase border-b border-gray-700">
+                        <tr>
+                            <th class="p-2">Orden</th>
+                            <th class="p-2">Equipo / Estado</th>
+                            <th class="p-2">Valor</th>
+                            <th class="p-2 text-center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-cuerpo"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script type="module">
-        const pass = prompt("Acceso SG MÓVIL. Ingrese clave:");
-        if (pass !== "SG2024") { 
-            document.body.innerHTML = "<h1 style='text-align:center; color:white; padding-top:50px;'>ACCESO DENEGADO</h1>";
-            window.location.href = "index.html";
-        }
+        const pass = prompt("Acceso SG MÓVIL:");
+        if (pass !== "SG2024") { document.body.innerHTML = ""; window.location.href = "index.html"; }
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBpc9mNkqjx0IvUaGHlhqQhGZdUoNE1Kw",
@@ -84,11 +92,46 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        window.cargarHistorial = async () => {
+            const querySnapshot = await getDocs(collection(db, "reparaciones"));
+            const tabla = document.getElementById('tabla-cuerpo');
+            let totalEntregado = 0;
+            tabla.innerHTML = "";
+
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const precioLimpio = parseInt(data.precio) || 0;
+                
+                if (data.estado === "¡Listo para entrega!") {
+                    totalEntregado += precioLimpio;
+                }
+
+                tabla.innerHTML += `
+                    <tr class="border-b border-gray-700/50 hover:bg-white/5 item-historial transition-all">
+                        <td class="p-2 font-bold text-blue-400">${docSnap.id}</td>
+                        <td class="p-2">
+                            <div class="font-bold">${data.modelo}</div>
+                            <div class="text-[9px] font-bold ${data.estado === '¡Listo para entrega!' ? 'text-green-500' : 'text-yellow-500'}">
+                                ${data.estado}
+                            </div>
+                        </td>
+                        <td class="p-2 text-green-400 font-bold">$${precioLimpio.toLocaleString('es-CO')}</td>
+                        <td class="p-2 text-center">
+                            <button onclick="cargarParaEditar('${docSnap.id}', '${data.modelo}', '${data.estado}', '${data.entrega}', '${precioLimpio}', '${data.detalles}', '${data.foto_url}')" class="text-blue-500 hover:text-white mx-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('ganancia-total').innerText = "COP $ " + totalEntregado.toLocaleString('es-CO');
+        };
+
         window.guardarCambios = async () => {
             const cod = document.getElementById('admin-codigo').value.toUpperCase().trim();
-            if(!cod) return alert("Error: El código es obligatorio");
+            if(!cod) return alert("Por favor ingresa un código.");
             const btn = document.getElementById('btn-guardar');
-            btn.innerText = "PROCESANDO...";
+            btn.innerText = "ESPERE...";
 
             try {
                 await setDoc(doc(db, "reparaciones", cod), {
@@ -99,65 +142,66 @@
                     detalles: document.getElementById('admin-detalles').value,
                     foto_url: document.getElementById('admin-foto').value
                 }, { merge: true });
-                alert("✅ ¡Base de datos actualizada!");
-            } catch (e) { alert("❌ Error al guardar en la nube."); }
-            btn.innerText = "💾 GUARDAR CAMBIOS";
+                alert("✅ Registro actualizado.");
+                cargarHistorial();
+            } catch (e) { alert("Error al guardar."); }
+            btn.innerText = "💾 GUARDAR";
+        };
+
+        window.cerrarCaja = async () => {
+            const total = document.getElementById('ganancia-total').innerText;
+            const confirmar = confirm("¿Deseas CERRAR CAJA? \n\nEsto reporta una ganancia de " + total + ".\n\nAtención: Se mantendrán los registros, pero debes estar seguro de haber cobrado todo lo entregado.");
+            
+            if (confirmar) {
+                alert("💰 CIERRE EXITOSO\n\nGanancia reportada: " + total + "\n\nPuedes seguir trabajando normalmente.");
+                // Aquí podrías agregar una lógica para mover a una colección de "archivo" si quisieras limpiar la tabla.
+            }
+        };
+
+        window.cargarParaEditar = (id, mod, est, ent, pre, det, fot) => {
+            document.getElementById('admin-codigo').value = id;
+            document.getElementById('admin-modelo').value = mod;
+            document.getElementById('admin-estado').value = est;
+            document.getElementById('admin-entrega').value = ent;
+            document.getElementById('admin-precio').value = pre;
+            document.getElementById('admin-detalles').value = (det === 'undefined') ? "" : det;
+            document.getElementById('admin-foto').value = (fot === 'undefined') ? "" : fot;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.filtrarHistorial = () => {
+            const busqueda = document.getElementById('buscador').value.toLowerCase();
+            const filas = document.querySelectorAll('.item-historial');
+            filas.forEach(f => f.style.display = f.innerText.toLowerCase().includes(busqueda) ? '' : 'none');
         };
 
         window.imprimirTicket = () => {
             const cod = document.getElementById('admin-codigo').value.toUpperCase();
             const mod = document.getElementById('admin-modelo').value;
             const ent = document.getElementById('admin-entrega').value;
-            const pre = document.getElementById('admin-precio').value;
+            const pre = parseInt(document.getElementById('admin-precio').value) || 0;
             const miLinkPAGINA = "https://samir4898.github.io/Consulta/"; 
 
             const win = window.open('', '', 'width=350,height=550');
             win.document.write(`
                 <html>
-                <head>
-                    <title>Ticket SG MÓVIL</title>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
-                    <style>
-                        body { font-family: sans-serif; text-align: center; padding: 10px; margin: 0; }
-                        .ticket { width: 250px; margin: auto; border: 1px solid #000; padding: 15px; }
-                        .qr-box { display: flex; justify-content: center; margin: 15px 0; }
-                        hr { border: none; border-top: 1px dashed #000; margin: 10px 0; }
-                        h1 { margin: 0; font-size: 24px; letter-spacing: -1px; }
-                        .codigo { font-size: 32px; font-weight: bold; margin: 5px 0; display: block; }
-                        .dato { text-align: left; font-size: 13px; margin: 5px 0; }
-                    </style>
-                </head>
-                <body>
-                    <div class="ticket">
-                        <h1>SG MÓVIL</h1>
-                        <p style="font-size: 11px; margin: 0;">Soporte Técnico Profesional</p>
-                        <hr>
-                        <p style="font-size: 12px; margin: 0;">ORDEN DE SERVICIO</p>
-                        <b class="codigo">${cod}</b>
-                        <hr>
-                        <div class="dato"><b>EQUIPO:</b> ${mod}</div>
-                        <div class="dato"><b>ENTREGA:</b> ${ent}</div>
-                        <div class="dato"><b>TOTAL:</b> $ ${pre}</div>
-                        <hr>
-                        <p style="font-size: 10px; margin: 0;">ESCANEA PARA SEGUIMIENTO:</p>
-                        <div id="qrcode" class="qr-box"></div>
-                        <p style="font-size: 8px; margin: 0; word-break: break-all;">${miLinkPAGINA}</p>
-                        <hr>
-                        <p style="font-size: 12px; font-weight: bold; margin: 0;">¡GRACIAS POR TU CONFIANZA!</p>
-                    </div>
-                    <script>
-                        new QRCode(document.getElementById("qrcode"), {
-                            text: "${miLinkPAGINA}",
-                            width: 130,
-                            height: 130
-                        });
-                        setTimeout(() => { window.print(); window.close(); }, 800);
-                    <\/script>
-                </body>
-                </html>
+                <head><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+                <style>body{font-family:sans-serif;text-align:center;padding:15px; margin:0;} .ticket{width:240px;margin:auto;border:1px solid #000;padding:10px;} hr{border:none;border-top:1px dashed #000;margin:10px 0;} h1{margin:0;font-size:22px;}</style></head>
+                <body><div class="ticket"><h1>SG MÓVIL</h1><p style="font-size:10px;">Soporte Técnico Profesional</p><hr><p style="margin:0;font-size:12px;">ORDEN:</p><b style="font-size:28px;">${cod}</b><hr>
+                <div style="text-align:left;font-size:12px;"><p><b>EQUIPO:</b> ${mod}</p><p><b>ENTREGA:</b> ${ent}</p><p><b>TOTAL:</b> $${pre.toLocaleString('es-CO')}</p></div><hr>
+                <div id="qrcode" style="display:flex;justify-content:center;margin:10px 0;"></div>
+                <p style="font-size:9px;word-break:break-all;">${miLinkPAGINA}</p><hr><b>¡GRACIAS!</b></div>
+                <script>new QRCode(document.getElementById("qrcode"),{text:"${miLinkPAGINA}",width:120,height:120}); setTimeout(()=>{window.print();window.close();},800);<\/script></body></html>
             `);
             win.document.close();
         };
+
+        cargarHistorial();
     </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
+    </style>
 </body>
 </html>
