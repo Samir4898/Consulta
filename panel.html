@@ -4,41 +4,68 @@
     <meta charset="UTF-8">
     <title>SG MÓVIL - Panel Administrativo</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-gray-900 text-white p-4">
     <div class="max-w-md mx-auto bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700">
-        <h2 class="text-2xl font-bold mb-6 text-blue-400 text-center uppercase tracking-tighter text-blue-400">Panel de Control SG</h2>
+        <h2 class="text-2xl font-bold mb-6 text-blue-400 text-center uppercase tracking-tighter">Panel de Control SG</h2>
         
         <div class="space-y-4">
-            <input type="text" id="admin-codigo" placeholder="Código (Ej: SG-100)" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white uppercase">
-            <input type="text" id="admin-modelo" placeholder="Modelo del Equipo" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white">
-            
-            <select id="admin-estado" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white">
-                <option>Recibido</option>
-                <option>En espera de piezas</option>
-                <option>En reparación</option>
-                <option>¡Listo para entrega!</option>
-            </select>
+            <div>
+                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Código de Orden</label>
+                <input type="text" id="admin-codigo" placeholder="Ej: SG-100" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white uppercase outline-none focus:border-blue-500">
+            </div>
 
-            <input type="text" id="admin-entrega" placeholder="Fecha prometida (Ej: Hoy 5 PM)" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white">
-            <textarea id="admin-detalles" placeholder="Comentarios para el cliente" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white h-24"></textarea>
-            <input type="text" id="admin-foto" placeholder="Link directo de foto (ImgBB)" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white">
+            <div>
+                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Modelo del Equipo</label>
+                <input type="text" id="admin-modelo" placeholder="Ej: Samsung A54" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white outline-none">
+            </div>
             
-            <button onclick="guardarCambios()" id="btn-guardar" class="w-full bg-blue-600 p-4 rounded-xl font-black hover:bg-blue-500 transition-all shadow-lg">
+            <div>
+                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Estado Actual</label>
+                <select id="admin-estado" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white outline-none">
+                    <option>Recibido</option>
+                    <option>En espera de piezas</option>
+                    <option>En reparación</option>
+                    <option>¡Listo para entrega!</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Fecha Prometida</label>
+                    <input type="text" id="admin-entrega" placeholder="Mañana 5 PM" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white text-xs outline-none">
+                </div>
+                <div>
+                    <label class="text-[10px] text-green-400 uppercase font-bold ml-1">Precio $</label>
+                    <input type="text" id="admin-precio" placeholder="120.000" class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-green-400 font-bold outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Notas para el cliente</label>
+                <textarea id="admin-detalles" placeholder="Cambio de pantalla original..." class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white h-20 outline-none"></textarea>
+            </div>
+
+            <div>
+                <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Link de Foto (ImgBB)</label>
+                <input type="text" id="admin-foto" placeholder="https://i.ibb.co/..." class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white text-xs outline-none">
+            </div>
+            
+            <button onclick="guardarCambios()" id="btn-guardar" class="w-full bg-blue-600 p-4 rounded-xl font-black hover:bg-blue-500 transition-all shadow-lg active:scale-95">
                 💾 GUARDAR CAMBIOS
             </button>
 
-            <button onclick="imprimirTicket()" class="w-full bg-gray-700 p-4 rounded-xl font-bold border border-gray-600 hover:bg-gray-600 transition-all">
+            <button onclick="imprimirTicket()" class="w-full bg-gray-700 p-4 rounded-xl font-bold border border-gray-600 hover:bg-gray-600 transition-all active:scale-95">
                 🖨️ IMPRIMIR COMPROBANTE
             </button>
         </div>
     </div>
 
     <script type="module">
-        // SEGURIDAD
-        const pass = prompt("Clave de acceso SG:");
-        if (pass !== "SG2024") { // <--- TU CLAVE
-            document.body.innerHTML = "PROHIBIDO";
+        const pass = prompt("Acceso SG MÓVIL. Ingrese clave:");
+        if (pass !== "SG2024") { 
+            document.body.innerHTML = "<h1 style='text-align:center; color:white; padding-top:50px;'>ACCESO DENEGADO</h1>";
             window.location.href = "index.html";
         }
 
@@ -58,8 +85,8 @@
         const db = getFirestore(app);
 
         window.guardarCambios = async () => {
-            const cod = document.getElementById('admin-codigo').value.toUpperCase();
-            if(!cod) return alert("Falta el código");
+            const cod = document.getElementById('admin-codigo').value.toUpperCase().trim();
+            if(!cod) return alert("Error: El código es obligatorio");
             const btn = document.getElementById('btn-guardar');
             btn.innerText = "PROCESANDO...";
 
@@ -68,33 +95,68 @@
                     modelo: document.getElementById('admin-modelo').value,
                     estado: document.getElementById('admin-estado').value,
                     entrega: document.getElementById('admin-entrega').value,
+                    precio: document.getElementById('admin-precio').value,
                     detalles: document.getElementById('admin-detalles').value,
                     foto_url: document.getElementById('admin-foto').value
                 }, { merge: true });
-                alert("¡Base de datos actualizada!");
-            } catch (e) { alert("Error al guardar."); }
+                alert("✅ ¡Base de datos actualizada!");
+            } catch (e) { alert("❌ Error al guardar en la nube."); }
             btn.innerText = "💾 GUARDAR CAMBIOS";
         };
 
         window.imprimirTicket = () => {
-            const cod = document.getElementById('admin-codigo').value;
+            const cod = document.getElementById('admin-codigo').value.toUpperCase();
             const mod = document.getElementById('admin-modelo').value;
             const ent = document.getElementById('admin-entrega').value;
-            const win = window.open('', '', 'width=300,height=400');
+            const pre = document.getElementById('admin-precio').value;
+            const miLinkPAGINA = "https://samir4898.github.io/Consulta/"; 
+
+            const win = window.open('', '', 'width=350,height=550');
             win.document.write(`
-                <div style="font-family:sans-serif; text-align:center; padding:10px; border:1px solid #000;">
-                    <h1 style="margin:0">SG MÓVIL</h1>
-                    <p>Comprobante de Ingreso</p>
-                    <hr>
-                    <p>CÓDIGO: <b style="font-size:20px">${cod.toUpperCase()}</b></p>
-                    <p>EQUIPO: ${mod}</p>
-                    <p>ENTREGA ESTIMADA: ${ent}</p>
-                    <hr>
-                    <p style="font-size:10px">Consulta tu estado en:<br><b>tu-link.github.io/SGMovil</b></p>
-                </div>
+                <html>
+                <head>
+                    <title>Ticket SG MÓVIL</title>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+                    <style>
+                        body { font-family: sans-serif; text-align: center; padding: 10px; margin: 0; }
+                        .ticket { width: 250px; margin: auto; border: 1px solid #000; padding: 15px; }
+                        .qr-box { display: flex; justify-content: center; margin: 15px 0; }
+                        hr { border: none; border-top: 1px dashed #000; margin: 10px 0; }
+                        h1 { margin: 0; font-size: 24px; letter-spacing: -1px; }
+                        .codigo { font-size: 32px; font-weight: bold; margin: 5px 0; display: block; }
+                        .dato { text-align: left; font-size: 13px; margin: 5px 0; }
+                    </style>
+                </head>
+                <body>
+                    <div class="ticket">
+                        <h1>SG MÓVIL</h1>
+                        <p style="font-size: 11px; margin: 0;">Soporte Técnico Profesional</p>
+                        <hr>
+                        <p style="font-size: 12px; margin: 0;">ORDEN DE SERVICIO</p>
+                        <b class="codigo">${cod}</b>
+                        <hr>
+                        <div class="dato"><b>EQUIPO:</b> ${mod}</div>
+                        <div class="dato"><b>ENTREGA:</b> ${ent}</div>
+                        <div class="dato"><b>TOTAL:</b> $ ${pre}</div>
+                        <hr>
+                        <p style="font-size: 10px; margin: 0;">ESCANEA PARA SEGUIMIENTO:</p>
+                        <div id="qrcode" class="qr-box"></div>
+                        <p style="font-size: 8px; margin: 0; word-break: break-all;">${miLinkPAGINA}</p>
+                        <hr>
+                        <p style="font-size: 12px; font-weight: bold; margin: 0;">¡GRACIAS POR TU CONFIANZA!</p>
+                    </div>
+                    <script>
+                        new QRCode(document.getElementById("qrcode"), {
+                            text: "${miLinkPAGINA}",
+                            width: 130,
+                            height: 130
+                        });
+                        setTimeout(() => { window.print(); window.close(); }, 800);
+                    <\/script>
+                </body>
+                </html>
             `);
-            win.print();
-            win.close();
+            win.document.close();
         };
     </script>
 </body>
